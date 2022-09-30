@@ -17,7 +17,7 @@ std::string PersonWithSmartPointers::GetName() const
 
 PersonWithSmartPointers::~PersonWithSmartPointers()
 {
-    std::cout << "Deleting PersonWithObjects" << m_name << std::endl;
+    std::cout << "Deleting PersonWithSmartPointers" << m_name << std::endl;
     
 }
 
@@ -53,3 +53,44 @@ void PersonWithSmartPointers::PrintOutHand()
     }
 }
 
+
+bool PersonWithSmartPointers::CanAddCardToStack(std::shared_ptr<Card> c){
+    bool stackHasCards = !m_stackOfCards.empty();
+
+    // Get the top card stored in the stack. If it's empty, make it 0.
+    int topCardValue = 0;
+    if (stackHasCards){
+        topCardValue = GetTopCardOnStack()->GetValue();
+    }
+
+    // 3 can only go on top of 2, J on top of 10, etc.
+    bool topCardCanAccept = topCardValue == c->GetValue()-1;
+
+    return topCardCanAccept;
+}
+
+bool PersonWithSmartPointers::AddCardToStack(std::shared_ptr<Card> c)
+{
+
+    // 3 can only go on top of 2, J on top of 10, etc.
+    bool topCardCanAccept = CanAddCardToStack(c);
+
+    if (!topCardCanAccept) return false;
+    else {
+        // Adds a card to the players stack from their hand
+        //std::cout<<"   AddCardToStackObject :"<<c.GetValue()<<" "<<c.GetSuit() << " " << c.GetGuid() << std::endl;
+        m_stackOfCards.push_back(std::move(c));
+        return true;
+    }
+}
+
+std::shared_ptr<Card> PersonWithSmartPointers::GetTopCardOnStack()
+{
+    // if the list is empty, throw an exception
+    while(!m_stackOfCards.empty())
+    {
+        std::shared_ptr<Card> topCard = m_stackOfCards.back();
+        return topCard;
+    }
+    throw "There are no cards in the stack";
+}

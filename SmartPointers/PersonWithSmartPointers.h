@@ -8,22 +8,32 @@
 class PersonWithSmartPointers
 {
 public:
-	PersonWithSmartPointers(std::string name) ;
-
-	PersonWithSmartPointers() = delete;
+	explicit PersonWithSmartPointers();
+	PersonWithSmartPointers(std::string name);
 
 	PersonWithSmartPointers( const PersonWithSmartPointers &p) = delete;
-
 	PersonWithSmartPointers(PersonWithSmartPointers && obj) = delete;
+	virtual ~PersonWithSmartPointers();
 
 
 	std::string GetName() const;
 
-	virtual ~PersonWithSmartPointers();
+	//virtual ~PersonWithSmartPointers();
 
 	bool AddCardToHand(std::shared_ptr<Card> c);
 	std::shared_ptr<Card> RemoveCardFromHand(int i);
+	std::shared_ptr<Card> & GetCardFromHand(int i);
+
 	void PrintOutHand();
+	void PrintOutStack();
+
+	int GetHandSize() const;
+
+	bool AddCardToStack(std::shared_ptr<Card> c);
+	bool CanAddCardToStack(std::shared_ptr<Card> c);
+	std::shared_ptr<Card> GetTopCardOnStack();
+
+	
 
     private: 
         std::string m_name;

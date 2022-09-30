@@ -9,6 +9,7 @@
  */
 
 #include "GameWithObjects.h"
+#include "../TheSongOfGod.h"
 #include <iostream>
 #include <vector>
 
@@ -115,7 +116,8 @@ bool GameWithObjects::ActionAddCardToStack(PersonWithObjects & player, std::stri
 
     // I was up until 2:30 AM making this. I've got my priorities straight.
     if (cardId == 69){
-        m_deck.SpecialFunction();
+        TheSongOfGod * song = new TheSongOfGod();
+        song->Enlighten();
         // After that experience, I don't think the player really needs the game anymore. Life is complete.
         return false;
     }

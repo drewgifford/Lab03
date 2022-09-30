@@ -23,15 +23,17 @@ class GameWithSmartPointers
 
         void PrintOutQueueOfPeople();
         void PrintOutStackOfPeople();
-        void PrintTurnHeader(PersonWithSmartPointers & player, int turn, std::string message);
+        void PrintTurnHeader(std::unique_ptr<PersonWithSmartPointers> & person, int turn, std::string message);
 
-        bool ActionDrawCard       (PersonWithSmartPointers & player, std::string & message);
-        bool ActionAddCardToStack (PersonWithSmartPointers & player, std::string & message);
-        bool ActionDiscardOne     (PersonWithSmartPointers & player, std::string & message);
-        bool ActionDiscardAll     (PersonWithSmartPointers & player, std::string & message);
-        bool ActionEndTurn        (PersonWithSmartPointers & player, std::string & message);
-        bool ActionInvalid        (PersonWithSmartPointers & player, std::string & message, int actionId);
+        bool ActionDrawCard       (std::unique_ptr<PersonWithSmartPointers> & person, std::string & message);
+        bool ActionAddCardToStack (std::unique_ptr<PersonWithSmartPointers> & person, std::string & message);
+        bool ActionDiscardOne     (std::unique_ptr<PersonWithSmartPointers> & person, std::string & message);
+        bool ActionDiscardAll     (std::unique_ptr<PersonWithSmartPointers> & person, std::string & message);
+        bool ActionEndTurn        (std::unique_ptr<PersonWithSmartPointers> & person, std::string & message);
+        bool ActionInvalid        (std::unique_ptr<PersonWithSmartPointers> & person, std::string & message, int actionId);
 
-        void DrawCard(PersonWithSmartPointers & player, int numCards);
+        void DrawCard(std::unique_ptr<PersonWithSmartPointers> & person, int numCards);
+
+        bool CLEAR_TERMINAL;
 
 };

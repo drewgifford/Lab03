@@ -12,7 +12,6 @@ class DeckWithObjects
         bool ReturnCard(Card c);
 
         void PrintDeck();
-        void SpecialFunction();
 
     private:
 
