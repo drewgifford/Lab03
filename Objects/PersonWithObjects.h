@@ -24,11 +24,15 @@ public:
 	bool AddCardToHand(Card  c);
 	bool AddCardToHand(Card& c);
 	Card RemoveCardFromHand(int i);
+	Card & GetCardFromHand(int i);
+
 	void PrintOutHand();
+	void PrintOutStack();
 
 	int GetHandSize() const;
 
 	bool AddCardToStack(Card c);
+	bool CanAddCardToStack(Card c);
 	Card & GetTopCardOnStack();
 
     private: 

@@ -15,6 +15,7 @@ class GameWithObjects
 		void RunGame();
 		void RunCheatGame();
 		void CheatingAdd(Card c);
+		void PrintTurnHeader(PersonWithObjects & player, int turn, std::string message);
     private:
 
 		void PrintOutQueueOfPeople();

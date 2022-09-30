@@ -47,6 +47,19 @@ bool PersonWithObjects::AddCardToHand(Card & c)
     return true;
 }
 
+Card & PersonWithObjects::GetCardFromHand(int i)
+{
+    auto it = m_listOfCards.begin();
+    
+    if(i < 0 ||  i +1 > m_listOfCards.size())
+    {
+        throw "Position doesn't exist in hand";
+    }
+    advance(it, i);
+    Card & c = *it;
+    return c;
+}
+
 Card PersonWithObjects::RemoveCardFromHand(int i)
 {
     auto it = m_listOfCards.begin();
@@ -82,27 +95,46 @@ void PersonWithObjects::PrintOutHand()
 
         id++;
     }
+
+    if (m_stackOfCards.empty()){
+        std::cout << "Stack top value: N/A" << std::endl;
+    } else {
+        Card & topCard = GetTopCardOnStack();
+        std::cout << "Stack top value: " << std::to_string(topCard.GetValue()) << std::endl;
+    }
+
     std::cout << std::endl;
 
+}
+
+bool PersonWithObjects::CanAddCardToStack(Card c){
+    bool stackHasCards = !m_stackOfCards.empty();
+
+    // Get the top card stored in the stack. If it's empty, make it 0.
+    int topCardValue = 0;
+    if (stackHasCards){
+        topCardValue = GetTopCardOnStack().GetValue();
+    }
+
+    // 3 can only go on top of 2, J on top of 10, etc.
+    bool topCardCanAccept = topCardValue == c.GetValue()-1;
+
+    return topCardCanAccept;
 }
 
 bool PersonWithObjects::AddCardToStack(Card c)
 {
 
-    // Check if top card's value is one less than this card, otherwise return false
-    bool stackHasCards = !m_stackOfCards.empty();
-
     // 3 can only go on top of 2, J on top of 10, etc.
-    bool topCardCanAccept = GetTopCardOnStack().GetValue() != c.GetValue()-1;
+    bool topCardCanAccept = CanAddCardToStack(c);
 
-    if (stackHasCards && topCardCanAccept){
-        return false;
+    if (!topCardCanAccept) return false;
+    else {
+        // Adds a card to the players stack from their hand
+        //std::cout<<"   AddCardToStackObject :"<<c.GetValue()<<" "<<c.GetSuit() << " " << c.GetGuid() << std::endl;
+        m_stackOfCards.push_back(std::move(c));
+        return true;
     }
-
-    // Adds a card to the players stack from their hand
-    //std::cout<<"   AddCardToStackObject :"<<c.GetValue()<<" "<<c.GetSuit() << " " << c.GetGuid() << std::endl;
-    m_stackOfCards.push_back(std::move(c));
-    return true;
 }
 
 Card & PersonWithObjects::GetTopCardOnStack()

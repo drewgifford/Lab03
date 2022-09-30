@@ -42,11 +42,22 @@ void GameWithObjects::RunGame()
 
     int numPlayers = players.size();
 
+    // Give them 5 cards at the start of the game
+    // Only setting it to 4 because it will automatically add 1 during each turn
+    int initialCards = 4;
+    for(int i = 0; i < initialCards; i++){
+        for(int p = 0; p < numPlayers; p++){
+            Card drawnCard = m_deck.DrawCard();
+            players.at(p)->AddCardToHand(std::move(drawnCard));
+        }
+    }
+
     // Game over condition we can modify
     bool gameOver = false;
 
     // Loop through each turn
     int turn = 0;
+
     while (gameOver == false){
 
         // Increment the turn so we can reference it
@@ -55,22 +66,15 @@ void GameWithObjects::RunGame()
         bool turnOver = false;
         bool breakAfterDrawing = false;
         int drawCards = 1;
-
-        // This will only run on each player's first turn
-        if (turn <= numPlayers){
-            // Each player needs to draw 5 cards on their first turn
-            drawCards = 5;
-        }
+        std::string message = "";
 
         // Grab the player at this turn
         PersonWithObjects & player = * players.front();
 
-        system("clear");
-
-        std::cout << "Turn " << std::to_string(turn) << " - " << player.GetName() << std::endl;
-
         while (turnOver == false){
             
+            system("clear");
+            PrintTurnHeader(player, turn, message);
 
             // This will only run if the user needs to draw cards
             // It will draw as many cards that are specified in the int drawCards
@@ -80,7 +84,7 @@ void GameWithObjects::RunGame()
                 Card drawnCard = m_deck.DrawCard();
                 
                 // Show the player which card they drew
-                std::cout << "Drawn card: " << std::to_string(drawnCard.GetSuit()) << " " << std::to_string(drawnCard.GetValue()) << " " << std::to_string(drawnCard.GetGuid()) << std::endl;
+                //std::cout << "Drawn card: " << std::to_string(drawnCard.GetSuit()) << " " << std::to_string(drawnCard.GetValue()) << " " << std::to_string(drawnCard.GetGuid()) << std::endl;
                 player.AddCardToHand(std::move(drawnCard));
 
                 // Move to the next card
@@ -96,14 +100,6 @@ void GameWithObjects::RunGame()
                 break;
             }
 
-            // Show which card is on top of their stack
-            try {
-                Card & topCard = player.GetTopCardOnStack();
-                std::cout << "Stack top value: " << std::to_string(topCard.GetValue()) << std::endl;
-            } catch (...){
-                std::cout << "No cards in stack" << std::endl;
-            }
-
 
             //Present options after original draw to 6 cards:
             std::cout << "Type # of action you want to take: " << std::endl;
@@ -116,17 +112,25 @@ void GameWithObjects::RunGame()
             int option;
             std::cin >> option;
 
+
+            // CLEAR THE TERMINAL TO ALLOW THE PLAYER TO SEE THEIR HAND MORE CLEARLY, WITHOUT CLUTTER.
+            system("clear");
+            PrintTurnHeader(player, turn, " ");
+            player.PrintOutHand();
+
             // 1 - Draw card if less than 6 cards
             
             if (option == 1){
                 // Set the number of cards to draw to 1
                 if (int i = player.GetHandSize(); i < 6){
                     drawCards = 1;
+                    message = "Drawn 1 card.";
                     continue;
                 }
                 else
                 {
-                    std::cout << "Cannot have more than 6 cards" << std::endl;
+                    message = "ERROR : CANNOT HAVE MORE THAN 6 CARDS IN YOUR HAND";
+                    continue;
                 }
 
             }
@@ -145,22 +149,52 @@ void GameWithObjects::RunGame()
                 }
 
 
-                if (cardId >= player.GetHandSize()) {
-                    std::cout << "ERROR : Cannot find card with ID " << std::to_string(cardId) << std::endl;
+                Card & checkCard = * new Card(0, 0);
+                try {
+                    checkCard = player.GetCardFromHand(cardId);
+                } catch (...) {
+                    message = "ERROR : CANNOT FIND CARD WITH ID " + std::to_string(cardId);
                     continue;
                 }
 
-                Card addCard = player.RemoveCardFromHand(cardId);
+                bool canAdd = player.CanAddCardToStack(checkCard);
 
-                bool canAdd = player.AddCardToStack(std::move(addCard));
+                if (canAdd) {
+                    Card cardToAdd = player.RemoveCardFromHand(cardId);
+                    player.AddCardToStack(std::move(cardToAdd));
+                    message = "Added Card with value " + std::to_string(cardToAdd.GetValue()) + " to the stack";
+
+                    // CHECK FOR THE WIN CONDITION
+                    if (player.GetTopCardOnStack().GetValue() == 13){
+                        // Player has won, since the top card is a King (13)
+                        gameOver = true;
+                        turnOver = true;
+
+                        system("clear");
+                        std::cout << "=========================================" << std::endl;
+                        std::cout << "Congratulations, " << player.GetName() << ". You won!" << std::endl;
+                        std::cout << "An arrest warrant has been sent out for all other participating players." << std::endl;
+                        std::cout << "=========================================" << std::endl;
+                        break;
+                    }
+
+
+                    continue;
+                }
                 if (!canAdd){
-                    std::cout << "Cannot add card to stack." << std::endl;
+                    message = "ERROR : CANNOT ADD CARD " + std::to_string(cardId) + " TO THE STACK.";
+                    continue;
                 }
                 
             }
 
             // 3 - Discard one card from Hand back into the Community Pile
             else if (option == 3){
+
+                if (player.GetHandSize() != 6){
+                    message = "ERROR : CANNOT DISCARD WHEN YOUR HAND IS LESS THAN 6 CARDS.";
+                    continue;
+                }
 
                 int cardId;
                 std::cout << "Select card in hand you want to remove: " << std::endl;
@@ -169,14 +203,16 @@ void GameWithObjects::RunGame()
                 try{
                     Card returnCard = player.RemoveCardFromHand(cardId);
                     m_deck.ReturnCard(std::move(returnCard));
+                    message = "Discarded card with value " + std::to_string(returnCard.GetValue());
+                    continue;
                 } catch (...){
-                    std::cout << "ERROR : Cannot find card with ID " << std::to_string(cardId) << std::endl;
+                    message = "ERROR : CANNOT FIND CARD WITH ID " + std::to_string(cardId);
                     continue;
                 }
                 
             }
             
-            // 4 - Discard entire 
+            // 4 - Discard entire hand
             else if (option == 4){
                 
                 // Loop through every card in the hand and remove 
@@ -208,11 +244,12 @@ void GameWithObjects::RunGame()
                 }
 
                 else {
-                    std::cout << "Cannot end turn with over 5 cards" << std::endl;
+                    message = "ERROR : CANNOT END YOUR TURN WITH MORE THAN 5 CARDS";
                     continue;
                 }
                     
             }
+            message = "";
             
         }
 
@@ -221,53 +258,12 @@ void GameWithObjects::RunGame()
         players.push_back(&player);
     }
 
-
-    Card card1Object = Card(11,1);
-    std::cout<<"Calling AddCardToHandObject"<<std::endl;
-    m_p1.AddCardToHand(std::move(card1Object));
-    std::cout<<"End Calling AddCardToHandObject"<<std::endl;
-    std::cout<<std::endl<<std::endl;
-
-    std::cout<<"Start Drawing Cards"<<std::endl;
-    std::cout<<"Drawing Cards 1"<<std::endl;
-    m_p1.AddCardToHand(std::move(m_deck.DrawCard()));
-    std::cout<<"Drawing Cards 2"<<std::endl;
-    m_p1.AddCardToHand(std::move(m_deck.DrawCard()));
-    std::cout<<"Drawing Cards 3"<<std::endl;
-    m_p2.AddCardToHand(std::move(m_deck.DrawCard()));
-    std::cout<<"Drawing Cards 4"<<std::endl;
-    m_p2.AddCardToHand(std::move(m_deck.DrawCard()));
-    std::cout<<"Drawing Cards 5"<<std::endl;
-    m_p3.AddCardToHand(std::move(m_deck.DrawCard()));
-    std::cout<<"Drawing Cards 6"<<std::endl;
-    m_p3.AddCardToHand(std::move(m_deck.DrawCard()));
-
-    std::cout << "P1 Player::PrintOutHand" << std::endl;
-    m_p1.PrintOutHand();
-    std::cout << "P2 Player::PrintOutHand" << std::endl;
-    m_p2.PrintOutHand();
-    std::cout << "P4 Player::PrintOutHand" << std::endl;
-    m_p3.PrintOutHand();
-    std::cout << "End Player::PrintOutHand" << std::endl;
-
-    std::cout << "PrintDeck" << std::endl;
-    m_deck.PrintDeck();
-
-    m_deck.ReturnCard(std::move(m_p1.RemoveCardFromHand(2)));
-    m_deck.ReturnCard(std::move(m_p1.RemoveCardFromHand(1)));
-
-    m_deck.ReturnCard(std::move(m_p2.RemoveCardFromHand(0)));
-    m_deck.ReturnCard(std::move(m_p3.RemoveCardFromHand(1)));
-
-    std::cout << "PrintDeck" << std::endl;
-    m_deck.PrintDeck();
-    std::cout << "P1 Player::PrintOutHand" << std::endl;
-    m_p1.PrintOutHand();
-    std::cout << "P2 Player::PrintOutHand" << std::endl;
-    m_p2.PrintOutHand();
-    std::cout << "P3 Player::PrintOutHand" << std::endl;
-    m_p3.PrintOutHand();
-    std::cout << "End Player::PrintOutHand" << std::endl;
+    std::cout << "Game has ended." << std::endl;
 
 }
 
+void GameWithObjects::PrintTurnHeader(PersonWithObjects & player, int turn, std::string message){
+    std::cout << "=========================================" << std::endl;
+    std::cout << "Turn " << std::to_string(turn) << " - " << player.GetName() << " : " << message << std::endl;
+    std::cout << "=========================================" << std::endl;
+}
