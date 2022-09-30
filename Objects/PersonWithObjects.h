@@ -26,6 +26,11 @@ public:
 	Card RemoveCardFromHand(int i);
 	void PrintOutHand();
 
+	int GetHandSize() const;
+
+	bool AddCardToStack(Card c);
+	Card & GetTopCardOnStack();
+
     private: 
         std::string m_name;
         std::list< Card > m_stackOfCards;

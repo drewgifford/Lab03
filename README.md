@@ -30,7 +30,7 @@ The rules are:
 2.	At the start of their turn, they must draw a card from the top of the community pile of cards 
 3.	The player then tries to make a stack from their hand in order from 1 to 13 during their turn.  (think solitiare like, first place the ace, then the two, and then three.  Except we don't care about the suit).
 4.	During their turn, the player may draw additional cards from the top of the pile so long as the total cards in their hand don’t exceed 6.
-5.	When the player cannot place any more cards in their stack and they have 6 cards in their hand, they must discard 1 card to the bottom of the community pile and then player  goes.
+5.	When the player cannot place any more cards in their stack and they have 6 cards in their hand, they must discard 1 card to the bottom of the community pile and then the next player goes.
 6.	A player may choose to discard all of their cards to the bottom of the community pile and start with 5 new cards at the beginning of their turn.  This action ends their turn without them getting a chance to draw a 6th card or discard any cards to their stack.
 7.	The game is played with a standard playing card deck (Ace = 1, Jack = 11, Queen =12, King = 13).  The suits are not important for the purposes of determining rule 3 (i.e. a 4 of any suit can go on top of a 3 of any suit).
 8. The Game ends when someone has a stack with 13 cards in it.
@@ -39,7 +39,7 @@ The rules are:
 Write and have pass at least 3 tests per class (3 classes, so so min of 9 UnitTests per each implementation).  These tests do not have to be super complicated, but this is where you want to think about your corner cases.
 
 Complete this before moving on to task 3.
- 
+
 ## Task 3 Now provide implementation for the approachs you chose in Task 0 and implement the card game 13.
 Show screen shots of you two games with an initial hand, and a screen shot of the game ending with a player winning.  Do this for both implementations.
 
