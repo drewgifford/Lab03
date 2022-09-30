@@ -9,7 +9,7 @@
  */
 
 #include "GameWithSmartPointers.h"
-#include "../TheSongOfGod.h"
+#include "../Util.h"
 #include <iostream>
 #include <list>
 #include "../Card.h"
@@ -20,7 +20,7 @@
 // If you're reading this, it is now 12:47 PM on September 30, 2022, and I have begun writing the
 // smart pointers version of the game. I'm sure everything is going to be alright. Right?
 
-GameWithSmartPointers::GameWithSmartPointers(): CLEAR_TERMINAL(false)
+GameWithSmartPointers::GameWithSmartPointers(): CLEAR_TERMINAL(true)
 {
     m_p1 = std::make_unique<PersonWithSmartPointers>("Drew (1)");
     m_p2 = std::make_unique<PersonWithSmartPointers>("Ethan (2)");
@@ -104,8 +104,7 @@ bool GameWithSmartPointers::ActionAddCardToStack(std::unique_ptr<PersonWithSmart
 
     // I was up until 2:30 AM making this. I've got my priorities straight.
     if (cardId == 69){
-        TheSongOfGod * song = new TheSongOfGod();
-        song->Enlighten();
+        Util::Enlighten();
         // After that experience, I don't think the player really needs the game anymore. Life is complete.
         return false;
     }
@@ -144,7 +143,7 @@ bool GameWithSmartPointers::ActionAddCardToStack(std::unique_ptr<PersonWithSmart
             // Set these variables so the for loops break.
 
             // Let's display a fun little message.
-            if (CLEAR_TERMINAL) system("clear");
+            if (CLEAR_TERMINAL) Util::ClearScreen();
             std::cout << "=========================================" << std::endl;
             std::cout << "Congratulations, " << player->GetName() << ". You won!" << std::endl;
             std::cout << "An arrest warrant has been sent out for all other participating players." << std::endl;
@@ -365,7 +364,7 @@ void GameWithSmartPointers::RunGame()
             
             // Clear the terminal and print the turn header defined at the bottom of this file.
             // Keeps everything looking nice and pretty.
-            if (CLEAR_TERMINAL) system("clear");
+            if (CLEAR_TERMINAL) Util::ClearScreen();
             PrintTurnHeader(player, turn, message);
 
             // Storing the number of cards in hand, for use in calculations.
@@ -447,7 +446,7 @@ void GameWithSmartPointers::RunGame()
             // Clear the terminal to allow the player to read their hand, without the options in the way.
             // This is somewhat unnecessary but I found it easier to test and play with.
             // I spend way too much time making things look pretty anyways...
-            if (CLEAR_TERMINAL) system("clear");
+            if (CLEAR_TERMINAL) Util::ClearScreen();
             PrintTurnHeader(player, turn, " ");
             player->PrintOutHand();
 
@@ -470,8 +469,13 @@ void GameWithSmartPointers::RunGame()
         // Put this person at the end of the vector, and move everybody else over by one.
         // (Drew) (Ethan) (J.T.) becomes...
         // (Ethan) <- (J.T.) <- (Drew) <-
+
+        players.emplace_back(std::move(player));
+
         players.erase(players.begin()); // Remove first element
-        players.push_back(player); // Add to end of list
+        std::cout << player->GetName() << std::endl;
+
+        //players.push_back(player); // Add to end of list
     }
 
     // Finally, the nightmare is over.

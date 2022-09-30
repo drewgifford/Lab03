@@ -34,6 +34,8 @@ class GameWithSmartPointers
 
         void DrawCard(std::unique_ptr<PersonWithSmartPointers> & person, int numCards);
 
+        void ClearScreen();
+
         bool CLEAR_TERMINAL;
 
 };

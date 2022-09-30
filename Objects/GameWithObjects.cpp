@@ -9,11 +9,11 @@
  */
 
 #include "GameWithObjects.h"
-#include "../TheSongOfGod.h"
+#include "../Util.h"
 #include <iostream>
 #include <vector>
 
-GameWithObjects::GameWithObjects(): m_p1("Drew (1)"), m_p2("Ethan (2)"), m_p3("J.T. (3)"), m_deck(), CLEAR_TERMINAL(false)
+GameWithObjects::GameWithObjects(): m_p1("Drew (1)"), m_p2("Ethan (2)"), m_p3("J.T. (3)"), m_deck(), CLEAR_TERMINAL(true)
 {
     // I hope you enjoy the amount of comments that are in this file. I enjoy writing them,
     // even if they are boring and pointless I feel like I'm telling a story.
@@ -116,8 +116,7 @@ bool GameWithObjects::ActionAddCardToStack(PersonWithObjects & player, std::stri
 
     // I was up until 2:30 AM making this. I've got my priorities straight.
     if (cardId == 69){
-        TheSongOfGod * song = new TheSongOfGod();
-        song->Enlighten();
+        Util::Enlighten();
         // After that experience, I don't think the player really needs the game anymore. Life is complete.
         return false;
     }
@@ -156,7 +155,7 @@ bool GameWithObjects::ActionAddCardToStack(PersonWithObjects & player, std::stri
             // Set these variables so the for loops break.
 
             // Let's display a fun little message.
-            if (CLEAR_TERMINAL) system("clear");
+            if (CLEAR_TERMINAL) Util::ClearScreen();
             std::cout << "=========================================" << std::endl;
             std::cout << "Congratulations, " << player.GetName() << ". You won!" << std::endl;
             std::cout << "An arrest warrant has been sent out for all other participating players." << std::endl;
@@ -375,7 +374,7 @@ void GameWithObjects::RunGame()
             
             // Clear the terminal and print the turn header defined at the bottom of this file.
             // Keeps everything looking nice and pretty.
-            if (CLEAR_TERMINAL) system("clear");
+            if (CLEAR_TERMINAL) Util::ClearScreen();
             PrintTurnHeader(player, turn, message);
 
             // Storing the number of cards in hand, for use in calculations.
@@ -457,7 +456,7 @@ void GameWithObjects::RunGame()
             // Clear the terminal to allow the player to read their hand, without the options in the way.
             // This is somewhat unnecessary but I found it easier to test and play with.
             // I spend way too much time making things look pretty anyways...
-            if (CLEAR_TERMINAL) system("clear");
+            if (CLEAR_TERMINAL) Util::ClearScreen();
             PrintTurnHeader(player, turn, " ");
             player.PrintOutHand();
 
@@ -488,6 +487,7 @@ void GameWithObjects::RunGame()
     std::cout << "Game has ended." << std::endl;
 
 }
+
 
 // If you're reading this, it is 12:46 PM on September 30, 2022. I have not started writing the Smart Pointers game.
 // Please wish us luck.

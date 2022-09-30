@@ -22,7 +22,7 @@ public:
 
 	bool AddCardToHand(std::shared_ptr<Card> c);
 	std::shared_ptr<Card> RemoveCardFromHand(int i);
-	std::shared_ptr<Card> & GetCardFromHand(int i);
+	std::shared_ptr<Card> GetCardFromHand(int i);
 
 	void PrintOutHand();
 	void PrintOutStack();

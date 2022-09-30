@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include "Util.h"
 #include "Pointers/GameWithPointers.h"
 #include "Objects/GameWithObjects.h"
 #include "SmartPointers/GameWithSmartPointers.h"
@@ -44,11 +45,31 @@ void CallGameWithCheating()
 
 int main()
 {
-	std::cout << "Start" << std::endl;
-	//CallGameWithCheating();
-	CallGameWithObjects();
-	//CallGameWithPointers();
-	//CallGameWithSmartPointers();
+
+	Util::Welcome();
+
+	std::cout << "Choose Data Structure to Play" << std::endl;
+
+	std::cout << "1 - Objects" << std::endl;
+	std::cout << "2 - Smart Pointers" << std::endl;
+
+	int gameType;
+	std::cin >> gameType;
+
+	switch(gameType){
+		case 1:
+			CallGameWithObjects();
+			break;
+		case 2:
+			CallGameWithSmartPointers();
+			break;
+		case 3:
+			CallGameWithPointers();
+			break;
+		default:
+			std::cout << "Invalid Data Structure" << std::endl;
+			break;
+	}
 	
 	std::cout << "End" << std::endl;
     return 0;

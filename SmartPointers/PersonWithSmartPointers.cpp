@@ -1,6 +1,7 @@
 
 #include "PersonWithSmartPointers.h"
 #include <iostream>
+#include <iomanip>
 
 PersonWithSmartPointers::PersonWithSmartPointers(std::string name) :m_name(name)
 {
@@ -43,15 +44,55 @@ std::shared_ptr<Card> PersonWithSmartPointers::RemoveCardFromHand(int i)
     return retVal;
 }
 
-
-void PersonWithSmartPointers::PrintOutHand()  
+std::shared_ptr<Card> PersonWithSmartPointers::GetCardFromHand(int i)  
 {
-    
-    for(auto it = m_listOfCards.begin(); it != m_listOfCards.end(); it++)
+    auto it = m_listOfCards.begin();
+    if(i < 0 ||  i +1 > m_listOfCards.size())
     {
-        std::cout<<"   AddCardToHandPointer :"<<(*it)->GetValue()<<" "<<(*it)->GetSuit()<<" "<<(*it)->GetGuid()<<std::endl;
+        throw "Position doesn't exist in hand";
     }
+    advance(it, i);
+    std::shared_ptr<Card> retVal = *it;
+    return retVal;
 }
+
+int PersonWithSmartPointers::GetHandSize() const {
+    return m_listOfCards.size();
+}
+
+void PersonWithSmartPointers::PrintOutHand()
+{
+    std::cout << std::setw(7) << std::left << "ID";
+    std::cout << std::setw(7) << std::left << "Suit";
+    std::cout << std::setw(7) << std::left << "Value";
+    std::cout << std::endl;
+
+    int id = 0;
+    for (auto it = m_listOfCards.begin(); it != m_listOfCards.end(); it++)
+    {
+        // Print ID
+        std::cout << std::setw(7) << std::left << std::to_string(id);
+        // Print Suit
+        std::cout << std::setw(7) << std::left << (*it)->GetSuit();
+        // Print Value
+        std::cout << std::setw(7) << std::left << (*it)->GetValue();
+
+        std::cout << std::endl;
+
+        id++;
+    }
+
+    if (m_stackOfCards.empty()){
+        std::cout << "Stack top value: N/A" << std::endl;
+    } else {
+        std::shared_ptr<Card> topCard = GetTopCardOnStack();
+        std::cout << "Stack top value: " << std::to_string(topCard->GetValue()) << std::endl;
+    }
+
+    std::cout << std::endl;
+
+}
+
 
 
 bool PersonWithSmartPointers::CanAddCardToStack(std::shared_ptr<Card> c){

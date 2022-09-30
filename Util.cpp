@@ -1,4 +1,4 @@
-#include "TheSongOfGod.h"
+#include "Util.h"
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -7,10 +7,39 @@
 using namespace std::this_thread;
 using namespace std::chrono;
 
+void Util::ClearScreen(){
+    std::cout << "\033[2J\033[1;1H";
+}
 
-void TheSongOfGod::Enlighten(){
+void Util::Welcome(){
+    Util::ClearScreen();
 
-    system("clear");
+    std::string welcome = R"V0G0N(.___________. __    __   __  .______     .___________. _______  _______ .__   __. 
+|           ||  |  |  | |  | |   _  \    |           ||   ____||   ____||  \ |  | 
+`---|  |----`|  |__|  | |  | |  |_)  |   `---|  |----`|  |__   |  |__   |   \|  | 
+    |  |     |   __   | |  | |      /        |  |     |   __|  |   __|  |  . `  | 
+    |  |     |  |  |  | |  | |  |\  \----.   |  |     |  |____ |  |____ |  |\   | 
+    |__|     |__|  |__| |__| | _| `._____|   |__|     |_______||_______||__| \__| 
+                                                                                  )V0G0N";
+
+
+    std::cout << std::endl << "Welcome to....." << std::endl;
+
+    std::istringstream iss(welcome);
+    for (std::string line; std::getline(iss, line); ){
+
+        std::cout << line << std::endl;
+
+    }
+    std::cout << std::endl << std::endl;
+
+
+}
+
+
+void Util::Enlighten(){
+
+    ClearScreen();
 
     std::cout << "Alexa, " << std::endl;
     sleep_for(seconds(1));
