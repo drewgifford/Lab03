@@ -16,6 +16,8 @@
 #include "PersonWithSmartPointers.h"
 #include "DeckWithSmartPointers.h"
 #include <vector>
+#include <stack>
+#include <queue>
 
 // If you're reading this, it is now 12:47 PM on September 30, 2022, and I have begun writing the
 // smart pointers version of the game. I'm sure everything is going to be alright. Right?
@@ -32,7 +34,7 @@ GameWithSmartPointers::~GameWithSmartPointers()
 {
     // What a lovely cout statement.
     // This will run when the game is deallocated from memory.
-    std::cout<<"GameWithSmartPointers Destructor Called"<<std::endl;	
+    //std::cout<<"GameWithSmartPointers Destructor Called"<<std::endl;	
 }
 
 // 12:49PM now. Time to work on the game. Cheers for getting this far, boys.
@@ -90,7 +92,7 @@ bool GameWithSmartPointers::ActionDrawCard(std::unique_ptr<PersonWithSmartPointe
  * 
  * @param player Reference to the target player
  * @param message Reference to the message to be displayed after the action is over
- * @return TRUE to allow another action
+ * @return TRUE to continue the game, FALSE to end the game
  */
 bool GameWithSmartPointers::ActionAddCardToStack(std::unique_ptr<PersonWithSmartPointers> & player, std::string & message){
     // Get user input for the Card ID
@@ -456,8 +458,11 @@ void GameWithSmartPointers::RunGame()
                  if (option == 0 || option >= currOption) turnOver = !ActionInvalid(player, message, option);
                 
             // Run all of our other actions if they are valid
-            else if (option == options[0]) turnOver = !ActionAddCardToStack(player, message);
-            else if (option == options[1]) turnOver = !ActionDrawCard(player, message);
+            else if (option == options[0]) {
+                gameOver = !ActionAddCardToStack(player, message);
+                turnOver = gameOver;
+            }
+            else if (option == options[1]) turnOver = !ActionAddCardToStack(player, message);
             else if (option == options[2]) turnOver = !ActionDiscardOne(player, message);
             else if (option == options[3]) turnOver = !ActionDiscardAll(player, message);
             else if (option == options[4]) turnOver = !ActionEndTurn(player, message);
@@ -480,52 +485,24 @@ void GameWithSmartPointers::RunGame()
 
     // Finally, the nightmare is over.
     std::cout << "Game has ended." << std::endl;
-
-
-    std::shared_ptr<Card> card1Pointer = std::make_shared<Card> (1,1);
-    std::cout<<"Calling Smart Pointer Version"<<std::endl;
-    m_p1->AddCardToHand(card1Pointer);
-    std::cout<<"End Calling Smart Pointer Version"<<std::endl;
-
-    std::cout<<"Start Drawing Cards"<<std::endl;
-    std::cout<<"Drawing Cards 1"<<std::endl;
-    m_p1->AddCardToHand(m_deck->DrawCard());
-    std::cout<<"Drawing Cards 2"<<std::endl;
-    m_p1->AddCardToHand(m_deck->DrawCard());
-    std::cout<<"Drawing Cards 3"<<std::endl;
-    m_p2->AddCardToHand(m_deck->DrawCard());
-    std::cout<<"Drawing Cards 4"<<std::endl;
-    m_p2->AddCardToHand(m_deck->DrawCard());
-    std::cout<<"Drawing Cards 5"<<std::endl;
-    m_p3->AddCardToHand(m_deck->DrawCard());
-    std::cout<<"Drawing Cards 6"<<std::endl;
-    m_p3->AddCardToHand(m_deck->DrawCard());
-
-    std::cout << "P1 Player::PrintOutHand" << std::endl;
-    m_p1->PrintOutHand();
-    std::cout << "P2 Player::PrintOutHand" << std::endl;
-    m_p2->PrintOutHand();
-    std::cout << "P4 Player::PrintOutHand" << std::endl;
-    m_p3->PrintOutHand();
-    std::cout << "End Player::PrintOutHand" << std::endl;
-
-    std::cout << "PrintDeck" << std::endl;
-    m_deck->PrintDeck();
-
-    m_deck->ReturnCard(m_p1->RemoveCardFromHand(2));
-    m_deck->ReturnCard(m_p1->RemoveCardFromHand(1));
-
-    m_deck->ReturnCard(m_p2->RemoveCardFromHand(0));
-    m_deck->ReturnCard(m_p3->RemoveCardFromHand(1));
-
-    std::cout << "PrintDeck" << std::endl;
-    m_deck->PrintDeck();
-    std::cout << "P1 Player::PrintOutHand" << std::endl;
-    m_p1->PrintOutHand();
-    std::cout << "P2 Player::PrintOutHand" << std::endl;
-    m_p2->PrintOutHand();
-    std::cout << "P3 Player::PrintOutHand" << std::endl;
-    m_p3->PrintOutHand();
-    std::cout << "End Player::PrintOutHand" << std::endl;
 }
 
+std::queue<std::unique_ptr<PersonWithSmartPointers>> GameWithSmartPointers::GetQueueOfPeople(){
+
+    std::queue<std::unique_ptr<PersonWithSmartPointers>> queuePlayers;
+
+    queuePlayers.push(std::move(m_p3));
+    queuePlayers.push(std::move(m_p2));
+    queuePlayers.push(std::move(m_p1));
+
+    return queuePlayers;
+}
+std::stack<std::unique_ptr<PersonWithSmartPointers>> GameWithSmartPointers::GetStackOfPeople(){
+    std::stack<std::unique_ptr<PersonWithSmartPointers>> stackPlayers;
+
+    stackPlayers.push(std::move(m_p3));
+    stackPlayers.push(std::move(m_p2));
+    stackPlayers.push(std::move(m_p1));
+
+    return stackPlayers;
+}

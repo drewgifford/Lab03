@@ -12,6 +12,9 @@
 #include "../Util.h"
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <stack>
+
 
 GameWithObjects::GameWithObjects(): m_p1("Drew (1)"), m_p2("Ethan (2)"), m_p3("J.T. (3)"), m_deck(), CLEAR_TERMINAL(true)
 {
@@ -26,7 +29,7 @@ GameWithObjects::~GameWithObjects()
 {
     // HULK SMASHH!!!
     // Sorry... this, uh.. calls when the game is deleted.
-    std::cout<<"GameWithObjects Destructor Called"<<std::endl;	
+    //std::cout<<"GameWithObjects Destructor Called"<<std::endl;	
 }
 
 void GameWithObjects::CheatingAdd(Card c)
@@ -102,7 +105,7 @@ bool GameWithObjects::ActionDrawCard(PersonWithObjects & player, std::string & m
  * 
  * @param player Reference to the target player
  * @param message Reference to the message to be displayed after the action is over
- * @return TRUE to allow another action
+ * @return TRUE to continue the game, FALSE to end the game
  */
 bool GameWithObjects::ActionAddCardToStack(PersonWithObjects & player, std::string & message){
     // Get user input for the Card ID
@@ -466,7 +469,10 @@ void GameWithObjects::RunGame()
                  if (option == 0 || option >= currOption) turnOver = !ActionInvalid(player, message, option);
                 
             // Run all of our other actions if they are valid
-            else if (option == options[0]) turnOver = !ActionAddCardToStack(player, message);
+            else if (option == options[0]) {
+                gameOver = !ActionAddCardToStack(player, message);
+                turnOver = gameOver;
+            }
             else if (option == options[1]) turnOver = !ActionDrawCard(player, message);
             else if (option == options[2]) turnOver = !ActionDiscardOne(player, message);
             else if (option == options[3]) turnOver = !ActionDiscardAll(player, message);
@@ -486,6 +492,27 @@ void GameWithObjects::RunGame()
     // Finally, the nightmare is over.
     std::cout << "Game has ended." << std::endl;
 
+}
+
+
+std::queue<PersonWithObjects> GameWithObjects::GetQueueOfPeople(){
+
+    std::queue<PersonWithObjects> queuePlayers;
+
+    queuePlayers.push(std::move(m_p1));
+    queuePlayers.push(std::move(m_p2));
+    queuePlayers.push(std::move(m_p3));
+
+    return queuePlayers;
+}
+std::stack<PersonWithObjects> GameWithObjects::GetStackOfPeople(){
+    std::stack<PersonWithObjects> stackPlayers;
+
+    stackPlayers.push(std::move(m_p1));
+    stackPlayers.push(std::move(m_p2));
+    stackPlayers.push(std::move(m_p3));
+
+    return stackPlayers;
 }
 
 

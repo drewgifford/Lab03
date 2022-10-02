@@ -19,7 +19,7 @@ DeckWithSmartPointers::DeckWithSmartPointers()
 }
 DeckWithSmartPointers::~DeckWithSmartPointers()
 {
-    std::cout<<"DeckWithSmartPointers Destructor Called"<<std::endl;	
+    //std::cout<<"DeckWithSmartPointers Destructor Called"<<std::endl;	
     m_deck.clear();
 }
 
@@ -53,6 +53,6 @@ void DeckWithSmartPointers::PrintDeck()
 {
     for(auto it = m_deck.begin(); it != m_deck.end(); it++)
     {
-        std::cout<<"   AddCardToHandPointer :"<<(*it)->GetValue()<<" "<<(*it)->GetSuit()<<" "<<(*it)->GetGuid()<<std::endl;
+        //std::cout<<"   AddCardToHandPointer :"<<(*it)->GetValue()<<" "<<(*it)->GetSuit()<<" "<<(*it)->GetGuid()<<std::endl;
     }
 }

@@ -18,13 +18,13 @@ std::string PersonWithSmartPointers::GetName() const
 
 PersonWithSmartPointers::~PersonWithSmartPointers()
 {
-    std::cout << "Deleting PersonWithSmartPointers" << m_name << std::endl;
+    //std::cout << "Deleting PersonWithSmartPointers" << m_name << std::endl;
     
 }
 
 bool PersonWithSmartPointers::AddCardToHand(std::shared_ptr<Card> c)  
 {
-    std::cout<<"   AddCardToHandPointer :"<<c->GetValue()<<" "<<c->GetSuit()<<" "<<c->GetGuid()<<std::endl;
+    //std::cout<<"   AddCardToHandPointer :"<<c->GetValue()<<" "<<c->GetSuit()<<" "<<c->GetGuid()<<std::endl;
     m_listOfCards.push_front(c);
     return true;
 }
